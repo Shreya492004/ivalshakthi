@@ -491,38 +491,24 @@ function AddtoHome(time, once) {
 // Dark Mode Detection
 var checkDarkModeStatus = localStorage.getItem("MobilekitDarkModeActive");
 // if dark mode on
-if (checkDarkModeStatus === 1 || checkDarkModeStatus === "1") {
-    $(".dark-mode-switch").attr('checked', true);
-    if ($("body").hasClass("dark-mode-active")) {
-    }
-    else {
-        $("body").addClass("dark-mode-active");
-    }
-}
-else {
-    $(".dark-mode-switch").attr('checked', false);
+if (checkDarkModeStatus === "1") {
+    $(".dark-mode-switch").prop('checked', true);
+    $("body").addClass("dark-mode-active");
+} else {
+    $(".dark-mode-switch").prop('checked', false);
+    $("body").removeClass("dark-mode-active");
 }
 // Dark mode switch
 $('.dark-mode-switch').change(function () {
-    $(".dark-mode-switch").trigger('.dark-mode-switch');
-    var darkmodeCheck = localStorage.getItem("MobilekitDarkModeActive");
-
-    if (darkmodeCheck === 1 || darkmodeCheck === "1") {
-        if ($("body").hasClass("dark-mode-active")) {
-            $("body").removeClass("dark-mode-active");
-        }
-        localStorage.setItem("MobilekitDarkModeActive", "0");
-        $(".dark-mode-switch").attr('checked', false);
-    }
-    else {
+    var isChecked = $(this).is(":checked");
+    $(".dark-mode-switch").prop('checked', isChecked);
+    if (isChecked) {
         $("body").addClass("dark-mode-active");
-        $(".dark-mode-switch").attr('checked', true);
         localStorage.setItem("MobilekitDarkModeActive", "1");
+    } else {
+        $("body").removeClass("dark-mode-active");
+        localStorage.setItem("MobilekitDarkModeActive", "0");
     }
-});
-var dmswitch = $(".dark-mode-switch");
-dmswitch.on('change', function () {
-    dmswitch.prop('checked', this.checked);
 });
 ///////////////////////////////////////////////////////////////////////////
 
