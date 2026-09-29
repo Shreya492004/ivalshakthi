@@ -185,9 +185,7 @@
                     <div class="form-group boxed">
                         <label for="subscriptionPlan" style="display: block; margin-bottom: 8px; font-weight: 600; text-align: left; width: 100%;">Subscription Plan</label>
                         <div class="input-wrapper">
-                            <select class="form-control custom-select" id="subscriptionPlan" required disabled>
-                                <option value="" disabled selected>Select Subscription Plan</option>
-                            </select>
+                            <input type="text" class="form-control" id="subscriptionPlan" placeholder="Select Book Type" readonly disabled>
                         </div>
                     </div>
 
@@ -269,37 +267,22 @@
         });
 
         const bookTypeRadios = document.querySelectorAll('input[name="bookType"]');
-        const subscriptionPlanSelect = document.getElementById("subscriptionPlan");
+        const subscriptionPlanInput = document.getElementById("subscriptionPlan");
         const plansByBookType = {
-            "E-Book": [
-                { value: "Digital (E-Magazine Access)", amount: 144 },
-                { value: "Per Month (Monthly Subscription)", amount: 30 }
-            ],
-            "Hard Copy (By Post)": [
-                { value: "One Year (12 Issues)", amount: 299 },
-                { value: "Per Month (Monthly Subscription)", amount: 30 }
-            ]
+            "E-Book": { value: "Digital One Year (E-Magazine Access)", amount: 144 },
+            "Hard Copy (By Post)": { value: "One Year (12 Issues)", amount: 299 }
         };
 
-        function updateSubscriptionPlans(bookType) {
-            subscriptionPlanSelect.innerHTML = '<option value="" disabled selected>Select Subscription Plan</option>';
-            const plans = plansByBookType[bookType] || [];
-
-            plans.forEach(plan => {
-                const option = document.createElement("option");
-                option.value = plan.value;
-                option.textContent = `${plan.value} - ₹${plan.amount}`;
-                option.dataset.amount = plan.amount;
-                subscriptionPlanSelect.appendChild(option);
-            });
-
-            subscriptionPlanSelect.disabled = plans.length === 0;
-            updateSelectPlaceholder(subscriptionPlanSelect);
+        function updateSubscriptionPlan(bookType) {
+            const plan = plansByBookType[bookType];
+            subscriptionPlanInput.value = plan ? `${plan.value} - ₹${plan.amount}` : "";
+            subscriptionPlanInput.dataset.amount = plan ? plan.amount : "";
+            subscriptionPlanInput.disabled = !plan;
         }
 
         bookTypeRadios.forEach(radio => {
             radio.addEventListener("change", function () {
-                updateSubscriptionPlans(this.value);
+                updateSubscriptionPlan(this.value);
             });
         });
 
@@ -316,7 +299,7 @@
             const mobile = mobileInput.value.trim();
             const address = addressInput.value.trim();
             const bookType = bookTypeInput ? bookTypeInput.value : "";
-            const subPlan = subscriptionPlanSelect.value;
+            const subPlan = subscriptionPlanInput.value;
 
             // 1. Name Validation
             if (!name || name.length < 2) {
@@ -364,13 +347,12 @@
                     icon: "warning",
                     title: "Select Subscription Plan",
                     text: "Please select a Subscription Plan."
-                }).then(() => subscriptionPlanSelect.focus());
+                }).then(() => subscriptionPlanInput.focus());
                 return;
             }
 
             const qrImageSrc = bookTypeInput.getAttribute("data-qr") || "assets/img/qrcode.jpeg";
-            const selectedPlanOption = subscriptionPlanSelect.options[subscriptionPlanSelect.selectedIndex];
-            const amount = Number(selectedPlanOption.dataset.amount);
+            const amount = Number(subscriptionPlanInput.dataset.amount);
             const formattedAmount = new Intl.NumberFormat("en-IN", {
                 style: "currency",
                 currency: "INR",
@@ -379,7 +361,7 @@
 
             // Payment popup uses the selected book type and plan amount.
             Swal.fire({
-                title: "Book Payment",
+                title: "Payment",
                 html: `
                     <div style="text-align: center; font-size: 14px; margin-top: 5px;">
                         <div style="background: #f4f6f9; padding: 12px; border-radius: 8px; margin-bottom: 15px; color: #333;">
@@ -388,11 +370,10 @@
                             <p style="margin: 6px 0 2px 0; font-size: 13px; color: #0284c7; font-weight: 600;">Type: ${bookType}</p>
                             <p style="margin: 2px 0 4px 0; font-size: 13px; color: #2563eb; font-weight: 600;">Plan: ${subPlan}</p>
                             <p style="margin: 0 0 4px 0; font-size: 16px; font-weight: 700; color: #1e293b;">Amount to Pay: ${formattedAmount}</p>
-                            <p style="margin: 0 0 4px 0;"><strong>UPI ID:</strong> ivalshakthi@upi</p>
-                            <p style="margin: 0; font-size: 12px; color: #64748b;">Customer Care: <a href="tel:7373027775">7373027775</a></p>
+                            <p style="margin: 4px 0; font-size: 12px; color: #475569;">Once payment is completed, please share the payment screenshot via WhatsApp to <a href="https://wa.me/917373027775" target="_blank" rel="noopener noreferrer">73730 27775</a>.</p>
                         </div>
                         <div style="text-align: left;">
-                            <label style="font-weight: 600; display: block; margin-bottom: 5px; color: #333;">Transaction ID / UTR Number:</label>
+                            <label for="swal-tx-id" style="font-weight: 600; display: block; margin-bottom: 5px; color: #333;">Transaction ID / UTR Number:</label>
                             <input id="swal-tx-id" class="swal2-input" placeholder="e.g. 423156789012" style="margin: 0; width: 100%; box-sizing: border-box; color: #000;">
                         </div>
                     </div>
@@ -417,7 +398,7 @@
                     }).then(() => {
                         document.getElementById("myForm").reset();
                         document.getElementById("currentDateInput").value = `${dd}-${mm}-${yyyy}`;
-                        updateSubscriptionPlans("");
+                        updateSubscriptionPlan("");
                         document.querySelectorAll("select.form-control").forEach(updateSelectPlaceholder);
                     });
                 }
