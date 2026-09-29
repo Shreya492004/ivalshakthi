@@ -370,30 +370,20 @@
                             <p style="margin: 6px 0 2px 0; font-size: 13px; color: #0284c7; font-weight: 600;">Type: ${bookType}</p>
                             <p style="margin: 2px 0 4px 0; font-size: 13px; color: #2563eb; font-weight: 600;">Plan: ${subPlan}</p>
                             <p style="margin: 0 0 4px 0; font-size: 16px; font-weight: 700; color: #1e293b;">Amount to Pay: ${formattedAmount}</p>
-                            <p style="margin: 4px 0; font-size: 12px; color: #475569;">Once payment is completed, please share the payment screenshot via WhatsApp to <a href="https://wa.me/917373027775" target="_blank" rel="noopener noreferrer">73730 27775</a>.</p>
                         </div>
-                        <div style="text-align: left;">
-                            <label for="swal-tx-id" style="font-weight: 600; display: block; margin-bottom: 5px; color: #333;">Transaction ID / UTR Number:</label>
-                            <input id="swal-tx-id" class="swal2-input" placeholder="e.g. 423156789012" style="margin: 0; width: 100%; box-sizing: border-box; color: #000;">
+                        <div style="text-align: center; background: #fff3cd; border: 1px solid #ffca2c; border-radius: 6px; padding: 12px; color: #664d03; font-size: 14px; font-weight: 600;">
+                            Once payment is completed, please share the payment screenshot via WhatsApp to <a href="https://wa.me/917373027775" target="_blank" rel="noopener noreferrer" style="font-weight: 700; color: #0b5ed7;">73730 27775</a>.
                         </div>
                     </div>
                 `,
                 showCancelButton: true,
-                confirmButtonText: "Submit Payment",
+                confirmButtonText: "Payment Done",
                 cancelButtonText: "Cancel",
-                preConfirm: () => {
-                    const txId = document.getElementById("swal-tx-id").value.trim();
-                    if (!txId) {
-                        Swal.showValidationMessage("Please enter your Transaction ID / UTR Number");
-                        return false;
-                    }
-                    return txId;
-                }
             }).then((result) => {
                 if (result.isConfirmed) {
                     Swal.fire({
-                        title: "Payment Submitted!",
-                        text: "Your Transaction ID (" + result.value + ") for " + bookType + " - " + subPlan + " (" + formattedAmount + ") has been submitted successfully. We will verify your payment.",
+                        title: "Thank You!",
+                        text: "Please share your payment screenshot via WhatsApp to 73730 27775 for " + bookType + " - " + subPlan + ".",
                         icon: "success"
                     }).then(() => {
                         document.getElementById("myForm").reset();
